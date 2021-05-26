@@ -1,17 +1,10 @@
 #! /usr/bin/env python3
 
 import sys
+import bioinformatics_tools as bfx
 
-# dna = 'GATGGAACTTGACTACGTAAATT'
-seq = open(sys.argv[1])
-dna = seq.read().rstrip('\n')
+file = sys.argv[1]
+rna = bfx.read_fasta(file)
 
-rna = ''
-
-for base in dna:
-    if base == 'T':
-        rna += 'U'
-    else:
-        rna += base
-
-print(rna)
+for seq in rna:
+    print(bfx.transcribe_dna_rna(seq))
