@@ -1,3 +1,5 @@
+# See ~/.gitignore_global for non-repo specific ignores
+
+### Specific to Rosalind Repo ###
 */rosalind_*.txt
 */answers/*
-./.vscode/*
