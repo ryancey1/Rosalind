@@ -1,4 +1,3 @@
 */rosalind_*.txt
 */answers/*
-Bioinformatics-Stronghold/__pycache__/*
-.vscode/*
+./.vscode/*
