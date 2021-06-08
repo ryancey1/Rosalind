@@ -1,11 +1,12 @@
 #! /usr/bin/env python3
 
+# TODO: Refactor code into classes.... Ideas for classes: DNAseq, RNAseq, PROTseq?
+
 '''
 A collection of tools for processing bioinformatics data
 '''
 
 import re
-from os import error
 
 # globals
 possible_nts = ['A', 'T', 'U', 'C', 'G']
@@ -29,7 +30,8 @@ codon_list = {'UUU': 'F', 'CUU': 'L', 'AUU': 'I', 'GUU': 'V',
               'UGA': '_', 'CGA': 'R', 'AGA': 'R', 'GGA': 'G',
               'UGG': 'W', 'CGG': 'R', 'AGG': 'R', 'GGG': 'G'}
 
-class NotInFastaError(error):
+
+class NotInFastaError(Exception):
     pass
 
 
@@ -90,7 +92,7 @@ def transitions_transversions(seq1, seq2):
     return ts/tv
 
 
-def translate_rna_protein(seq, initial_pos = 0):
+def translate_rna_protein(seq, initial_pos=0):
     # if not rna, transcribe it
     rna = validate_sequence(seq)
     prot = []
@@ -134,11 +136,29 @@ def gc_content(seq):
     return (seq.count('G') + seq.count('C'))/len(seq)
 
 
-def find_orfs(seq):
+def find_orfs(seq: str) -> list:
     orfs = []
     if not 'U' in seq:
         seq = transcribe_dna_rna(seq)
     for stop in ['UAA', 'UAG', 'UGA']:
         regex = f'AUG[AUCG]*{stop}'
         orfs += re.findall(r'(?=(%s))' % regex, seq)
-    return orfs    
+    return orfs
+
+
+def infer_rna(protein: str) -> int:
+    """infer_rna takes an input protein string and calculates the number of unique RNA strands it may come from.
+
+    Args:
+        protein (str): A protein sequence.
+
+    Returns:
+        int: The number of possible parent RNAs, modulo 1000000.
+    """
+
+    infer = sum([value == '_' for value in codon_list.values()])
+
+    for aa in protein:
+        infer *= sum([value == aa for value in codon_list.values()])
+
+    return infer % 1000000
