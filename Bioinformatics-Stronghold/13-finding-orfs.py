@@ -9,16 +9,7 @@ import sys
 import bioinformatics_tools as bfx
 
 start_codons, stop_codons = ['ATG'], ['TAA', 'TAG', 'TGA']
-orfs = []
 proteins = []
-
-def revcom(dna):
-    complement = dna.lower()
-    complement = complement.replace('a', 'T')
-    complement = complement.replace('t', 'A')
-    complement = complement.replace('c', 'G')
-    complement = complement.replace('g', 'C')
-    return complement[::-1]    
 
 def translate(orf):
     codon_list= {
@@ -73,7 +64,7 @@ def find_orfs(dna):
 def regex_find_orfs(dna):
     for start_codon in re.finditer(r'ATG', dna):
         start, end = start_codon.start(), start_codon.end()
-        orf = dna[start:end]
+        # orf = dna[start:end]
         while dna[end-3:end] not in stop_codons:
             end += 3
             if end > len(dna):
@@ -86,16 +77,17 @@ def read_fasta(dna):
     fasta = fasta.replace('\n', '')
     return fasta
 
-
 if __name__=='__main__':
     file = '/Users/ryanyancey/Git/Rosalind/Bioinformatics-Stronghold/rosalind_orf.txt'
-    dna = open(file).read().rstrip('\n')
-    dna = read_fasta(dna)
+    
+    dna = bfx.read_fasta(file)
     if len(dna) > 1000:
         sys.exit('Imported DNA is longer than 1kbp.')
-    regex_find_orfs(dna)
-    regex_find_orfs(bfx.reverse_complement(dna))
-    for orf in orfs:
-        translate(orf)
-    for protein in proteins:
-        print(protein)
+        
+    orfs = []
+    for x in dna.values():
+        orfs += bfx.find_orfs(x)
+    
+    proteins = [bfx.translate_rna_protein(x) for x in orfs]
+    proteins = set([''.join(aa) for aa in proteins])
+    print(*proteins, sep = '\n')

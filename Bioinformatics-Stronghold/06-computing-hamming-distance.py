@@ -4,31 +4,20 @@
 '''
 
 import sys
+import bioinformatics_tools as bfx
 
 # reads sequences into a list and checks if the number of sequences is correct
 def import_seqs(file):
-    seqs = []
-    while True:
-        line = file.readline().rstrip('\n')
-        if not line or line == '':
-            break
-        seqs.append(line)
-    if len(seqs) > 2:
-        exit('Error: Number of sequences cannot exceed 2')
-    return seqs        
+    with open(file) as f:
+        return [line.strip() for line in f]
 
 
-file = open(sys.argv[1])
-seqs = import_seqs(file)
+if __name__ == '__main__':
+    # file = sys.argv[1]
+    file = 'rosalind_hamm.txt'
+    seqs = import_seqs(file)
+    
+    seq1, seq2 = seqs[0], seqs[1]
 
-seq1, seq2 = seqs[0], seqs[1]
-len1, len2 = len(seq1), len(seq2)
-
-hd = 0
-
-for i in range(len(seq1)):
-    s, t = seq1[i], seq2[i]
-    if s != t:
-        hd += 1
-
-print(hd)
+    hd = bfx.hamming_distance(seq1, seq2)
+    print(hd)

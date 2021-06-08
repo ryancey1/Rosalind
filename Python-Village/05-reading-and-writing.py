@@ -8,7 +8,8 @@ Return: A file containing all the even-numbered lines from the original file. As
 
 import sys
 
-f = sys.argv[1]
+# f = sys.argv[1]
+f = './rosalind_ini5.txt'
 file = open(f)
 i = 1
 evens = ''
@@ -16,7 +17,7 @@ evens = ''
 
 for line in file:
     if i < 1000 and i % 2 == 0:
-        evens += line
+        print(line.rstrip('\n'))
         i += 1
     elif i > 1000:
         print('Too many lines in this file.')
